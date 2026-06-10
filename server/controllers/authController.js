@@ -55,7 +55,7 @@ const updateProfileImage = async (req, res) => {
       });
     }
 
-    user.profileImage = req.body.profileImage;
+    user.profilePic = req.body.profilePic;
 
     await user.save();
 
