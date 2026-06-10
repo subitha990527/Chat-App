@@ -1,246 +1,311 @@
 import heroBg from "../assets/UI001.png";
 import secondBg from "../assets/UI002.png";
 import thirdBg from "../assets/UI003.png";
-
+import heroVideo from "../assets/video2.mp4";
 
 
 function Landing() {
-
   return (
+    <div
+      style={{
+        background: `
+          radial-gradient(circle at top left, rgba(96,165,250,0.35) 0%, transparent 28%),
+          radial-gradient(circle at top right, rgba(129,140,248,0.30) 0%, transparent 30%),
+          radial-gradient(circle at bottom left, rgba(99,102,241,0.25) 0%, transparent 35%),
+          linear-gradient(180deg, #eef2ff 0%, #c7d2fe 45%, #a5b4fc 100%)
+        `,
+        minHeight: "100vh",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Floating Blobs */}
+      <div
+        style={{
+          position: "absolute",
+          width: "320px",
+          height: "320px",
+          background: "rgba(99,102,241,0.18)",
+          borderRadius: "50%",
+          top: "-80px",
+          left: "-100px",
+          filter: "blur(40px)",
+        }}
+      />
 
-<div
-  className="vh-100"
-  style={{
-    background: `
-      radial-gradient(circle at top left, rgba(96,165,250,0.35) 0%, transparent 28%),
-      radial-gradient(circle at top right, rgba(129,140,248,0.30) 0%, transparent 30%),
-      radial-gradient(circle at bottom left, rgba(99,102,241,0.25) 0%, transparent 35%),
-      linear-gradient(180deg, #eef2ff 0%, #c7d2fe 45%, #a5b4fc 100%)
-    `,
-    overflow: "hidden",
-    position: "relative",
-  }}
->
+      <div
+        style={{
+          position: "absolute",
+          width: "260px",
+          height: "260px",
+          background: "rgba(59,130,246,0.15)",
+          borderRadius: "50%",
+          bottom: "-60px",
+          right: "-60px",
+          filter: "blur(35px)",
+        }}
+      />
 
-  {/* Soft Floating Shapes */}
-  <div
-    style={{
-      position: "absolute",
-      width: "320px",
-      height: "320px",
-      background: "rgba(99,102,241,0.18)",
-      borderRadius: "50%",
-      top: "-80px",
-      left: "-100px",
-      filter: "blur(40px)",
-    }}
-  />
-
-  <div
-    style={{
-      position: "absolute",
-      width: "260px",
-      height: "260px",
-      background: "rgba(59,130,246,0.15)",
-      borderRadius: "50%",
-      bottom: "-60px",
-      right: "-60px",
-      filter: "blur(35px)",
-    }}
-  />
-
-  <div
-    style={{
-      position: "absolute",
-      width: "180px",
-      height: "180px",
-      background: "rgba(168,85,247,0.12)",
-      borderRadius: "50%",
-      top: "35%",
-      right: "10%",
-      filter: "blur(30px)",
-    }}
-  />
-
-
-
-      {/* Navbar */}
-        <div className="d-flex justify-content-end p-4 gap-3">
-
-        {/* Login */}
-        <a
-            href="/login"
+      {/* NAVBAR */}
+      <nav className="container py-4">
+        <div className="d-flex justify-content-between align-items-center">
+          <h3
+            className="fw-bold m-0"
             style={{
-            padding: "10px 22px",
-            borderRadius: "40px",
-            textDecoration: "none",
-            color: "white",
-            fontWeight: "600",
-            fontSize: "14px",
-            background:
-                "linear-gradient(to right,#0f172a,#334155)",
-            boxShadow: "0 8px 18px rgba(15,23,42,0.25)",
-            transition: "0.3s",
-            }}
-        >
-            Login
-        </a>
-
-
-        {/* Register */}
-        <a
-            href="/register"
-            style={{
-            padding: "10px 24px",
-            borderRadius: "40px",
-            textDecoration: "none",
-            color: "white",
-            fontWeight: "600",
-            fontSize: "14px",
-            background:
+              background:
                 "linear-gradient(to right,#7c3aed,#06b6d4)",
-            boxShadow: "0 8px 20px rgba(124,58,237,0.35)",
-            transition: "0.3s",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
             }}
-        >
-            Register
-        </a>
+          >
+            NexChat
+          </h3>
 
-        </div>
-
-
-      {/* Main Section */}
-      <div className="container-fluid">
-
-        <div className="row justify-content-center align-items-center">
-
-
-          {/* Card 1 */}
-          <div className="col-md-3 d-flex justify-content-center">
-
-            <div
+          <div className="d-flex gap-3">
+            <a
+              href="/login"
               style={{
-                width: "280px",
-                height: "620px",
+                padding: "10px 22px",
                 borderRadius: "40px",
-                overflow: "hidden",
-                position: "relative",
-                backgroundImage: `url(${heroBg})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                boxShadow: "0 20px 50px rgba(0,0,0,0.2)",
+                textDecoration: "none",
+                color: "#fff",
+                fontWeight: "600",
+                background:
+                  "linear-gradient(to right,#0f172a,#334155)",
               }}
             >
+              Login
+            </a>
 
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background:
-                    "rgba(0,0,0,0.35)",
+            <a
+              href="/register"
+              style={{
+                padding: "10px 22px",
+                borderRadius: "40px",
+                textDecoration: "none",
+                color: "#fff",
+                fontWeight: "600",
+                background:
+                  "linear-gradient(to right,#7c3aed,#06b6d4)",
+              }}
+            >
+              Register
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      {/* HERO SECTION */}
+      <section
+        className="container"
+        style={{
+          minHeight: "75vh",
+        }}
+      >
+        <div className="row align-items-center h-100">
+
+          {/* LEFT */}
+          <div className="col-lg-5">
+
+            <span
+              className="px-3 py-2 rounded-pill"
+              style={{
+                background: "rgba(124,58,237,.15)",
+                color: "#6d28d9",
+                fontWeight: "600",
+              }}
+            >
+              ✨ Real-Time Messaging
+            </span>
+
+            <h1
+              className="fw-bold mt-4"
+              style={{
+                fontSize: "3.1rem",
+                lineHeight: "1.1",
+                color: "#0f172a",
+                display: "block",
+                marginTop: "20px",  }}
+            >
+            Connect,
+            <br />
+            Communicate,
+            <br />
+            <span
+              style={{
+                background: "linear-gradient(90deg,#7c3aed,#06b6d4)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: "2.8rem",
+                lineHeight: "1.1",
+                display: "block",
+                marginTop: "20px",  
                 }}
-              ></div>
+            >
+              Stay Close Anywhere
+            </span>
+            </h1>
 
+            <p
+              className="mt-4"
+              style={{
+                color: "#475569",
+                fontSize: "1.1rem",
+              }}
+            >
+              Chat, connect, and share moments with people who matter most in a secure and engaging space.
+            </p>
 
-              <div
-                className="position-relative text-white h-100 d-flex flex-column justify-content-center align-items-center text-center px-4"
+            <div className="d-flex gap-3 mt-4">
+              <a
+                href="/register"
+                className="btn btn-lg text-white"
+                style={{
+                  borderRadius: "50px",
+                  padding: "8px 25px",
+                    
+                  background:
+                    "linear-gradient(to right,#7c3aed,#06b6d4)",
+                }}
               >
-
-              </div>
+                Get Started
+              </a>
 
             </div>
-
           </div>
 
-
-          {/* Card 2 */}
-          <div className="col-md-3 d-flex justify-content-center">
-
+          {/* RIGHT */}
+          <div className="col-lg-7 text-center">
             <div
-                style={{
-                width: "280px",
-                height: "620px",
-                borderRadius: "40px",
+              style={{
+                borderRadius: "30px",
                 overflow: "hidden",
-                position: "relative",
-                background: "#000",
-                boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
-                }}
+                boxShadow:
+                  "0 25px 60px rgba(0,0,0,.15)",
+              }}
             >
+              {/* <img
+                src={firstBg}
+                alt="hero"
+                className="img-fluid"
+              /> */}
 
-                {/* Image */}
-                <img
-                src={secondBg}
-                alt="chat-phone"
+              <div
                 style={{
+                  borderRadius: "30px",
+                  overflow: "hidden",
+                  boxShadow: "0 25px 60px rgba(0,0,0,.15)",
+                }}
+              >
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  style={{
                     width: "100%",
-                    height: "100%",
+                    display: "block",
                     objectFit: "cover",
-                }}
-                />
-
-                {/* Overlay */}
-                <div
-                style={{
-                    position: "absolute",
-                    inset: 0,
-                    background:
-                    "linear-gradient(to top, rgba(0,0,0,0.4), transparent)",
-                }}
+                  }}
                 >
-
-                </div>
-
+                  <source src={heroVideo} type="video/mp4" />
+                </video>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            </div>
+      {/* APP PREVIEW */}
+      <section className="container py-3">
 
+        <div className="text-center mb-5">
+          <h2 className="fw-bold">Conversations Made Simple</h2>
 
-          {/* Card 3 */}
-          <div className="col-md-3 d-flex justify-content-center">
+          <p
+            style={{
+              color: "#475569",
+            }}
+          >
+            
+            Browse the screens that power a smooth and
+            interactive chatting experience.
+          </p>
+        </div>
 
+        <div className="row g-4">
+
+          {/* CARD 1 */}
+          <div className="col-md-4 px-5">
             <div
-                style={{
-                width: "280px",
-                height: "620px",
-                borderRadius: "40px",
+              style={{
+                height: "600px",
+                borderRadius: "30px",
                 overflow: "hidden",
-                position: "relative",
-                background: "#000",
-                boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
-                }}
+                boxShadow:
+                  "0 20px 50px rgba(0,0,0,.15)",
+              }}
             >
-
-                {/* Image */}
-                <img
+              <img
                 src={thirdBg}
-                alt="chat-phone"
+                alt=""
                 style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
                 }}
-                />
-
-                {/* Overlay */}
-                <div
-                style={{
-                    position: "absolute",
-                    inset: 0,
-                    background:
-                    "linear-gradient(to top, rgba(0,0,0,0.4), transparent)",
-                }}
-                ></div>
-
-
+              />
             </div>
+          </div>
 
+          {/* CARD 2 */}
+          <div className="col-md-4 px-5">
+            <div
+              style={{
+                height: "600px",
+                borderRadius: "30px",
+                overflow: "hidden",
+                boxShadow:
+                  "0 20px 50px rgba(0,0,0,.15)",
+              }}
+            >
+              <img
+                src={secondBg}
+                alt=""
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* CARD 3 */}
+          <div className="col-md-4 px-5">
+            <div
+              style={{
+                height: "600px",
+                borderRadius: "30px",
+                overflow: "hidden",
+                boxShadow:
+                  "0 20px 50px rgba(0,0,0,.15)",
+              }}
+            >
+              <img
+                src={heroBg}
+                alt=""
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
           </div>
 
         </div>
-
-      </div>
-
+      </section>
     </div>
   );
 }

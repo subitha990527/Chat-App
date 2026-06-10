@@ -204,45 +204,72 @@ function Home() {
     window.location.href = "/";
   };
 
-const saveCroppedImage = async () => {
+  const getCroppedImg = (imageSrc, pixelCrop) => {
 
-  localStorage.setItem(
-    "profileImage",
-    imageSrc
-  );
+   return new Promise((resolve) => {
+    const image = new Image();
 
-  const token = localStorage.getItem("token");
+    image.src = imageSrc;
 
-  const res = await axios.put(
-    "http://localhost:5000/api/users/profile-image",
-    {
-      // profileImage: imageSrc,
-      profilePic: imageSrc,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = pixelCrop.width;
+      canvas.height = pixelCrop.height;
+
+      ctx.drawImage(
+        image,
+        pixelCrop.x,
+        pixelCrop.y,
+        pixelCrop.width,
+        pixelCrop.height,
+        0,
+        0,
+        pixelCrop.width,
+        pixelCrop.height
+      );
+
+      resolve(canvas.toDataURL("image/jpeg"));
+    };
+   });
+  };
+
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+
+  const saveCroppedImage = async () => {
+
+    const croppedImage = await getCroppedImg(
+      imageSrc,
+      croppedAreaPixels
+    );
+
+    setProfileImage(croppedImage);
+
+    localStorage.setItem(
+      "profileImage",
+      croppedImage
+    );
+
+    const token = localStorage.getItem("token");
+
+    await axios.put(
+      "http://localhost:5000/api/users/profile-image",
+      {
+        profilePic: croppedImage,
       },
-    }
-  );
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-  setProfileImage(
-    // res.data.profileImage
-      res.data.profilePic
+    await fetchUsers();
 
-  );
-
-  fetchUsers();
-
-  setProfileImage(imageSrc);
-
-  if (selectedUser) {
-
-    await fetchMessages(selectedUser._id);
-  }
-
-  setShowCrop(false);
-};
+    setShowCrop(false);
+  };
 
   return (
 
@@ -295,25 +322,23 @@ const saveCroppedImage = async () => {
                 />
 
                 {/* Profile Image */}
-                <label
-                  htmlFor="profileUpload"
+           
+                <div
                   style={{
                     width: "58px",
                     height: "58px",
                     borderRadius: "50%",
                     overflow: "hidden",
-                    cursor: "pointer",
                     background:
                       "linear-gradient(135deg,#4f46e5,#60a5fa)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
                   }}
                 >
 
                   {
-profileImage && profileImage !== "" ? (
+                    profileImage && profileImage !== "" ? (
                       <img
                         src={profileImage}
                         alt="profile"
@@ -334,7 +359,8 @@ profileImage && profileImage !== "" ? (
                     )
                   }
 
-                </label>
+                {/* </label> */}
+                </div>
 
                 {/* Name */}
                 <div>
@@ -363,7 +389,10 @@ profileImage && profileImage !== "" ? (
             <div className="d-flex align-items-center gap-2">
 
               {/* Profile Icon Button */}
-              <button
+           
+
+              <label
+                htmlFor="profileUpload"
                 style={{
                   border: "none",
                   width: "48px",
@@ -378,11 +407,8 @@ profileImage && profileImage !== "" ? (
                   cursor: "pointer",
                 }}
               >
-                <FaUserCircle
-                  size={30}
-                  color="white"
-                />
-              </button>
+                <FaUserCircle size={30} color="white" />
+              </label>
 
               {/* Logout */}
               <button
@@ -455,62 +481,45 @@ profileImage && profileImage !== "" ? (
                   <div className="d-flex align-items-center gap-3">
 
                     {/* Avatar */}
-                    {/* <div
+
+                    <div
                       style={{
                         width: "50px",
                         height: "50px",
                         borderRadius: "50%",
+                        overflow: "hidden",
                         background:
                           "linear-gradient(135deg,#4f46e5,#60a5fa)",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        color: "white",
-                        fontWeight: "bold",
-                        fontSize: "18px",
                       }}
                     >
-                      {user.name.charAt(0)}
-                    </div> */}
 
-                    <div
-  style={{
-    width: "50px",
-    height: "50px",
-    borderRadius: "50%",
-    overflow: "hidden",
-    background:
-      "linear-gradient(135deg,#4f46e5,#60a5fa)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  }}
->
-{user?.profileImage ? (
-    <img
-      src={user.profileImage}
-      alt="profile"
-      style={{
-        width: "100%",
-        height: "100%",
-        objectFit: "cover",
-      }}
-    />
+                      {user?.profilePic ? (
+                      <img
+                        src={user.profilePic}
+                        alt="profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
 
-  ) : (
+                        <span
+                          style={{
+                            color: "white",
+                            fontWeight: "bold",
+                            fontSize: "18px",
+                          }}
+                        >
+                          {user.name.charAt(0)}
+                        </span>
 
-    <span
-      style={{
-        color: "white",
-        fontWeight: "bold",
-        fontSize: "18px",
-      }}
-    >
-      {user.name.charAt(0)}
-    </span>
-
-  )}
-</div>
+                      )}
+                    </div>
 
                     {/* User Details */}
                     <div className="flex-grow-1">
@@ -646,13 +655,13 @@ profileImage && profileImage !== "" ? (
 
                 {/* Messages */}
                <div
-  className="flex-grow-1 p-4"
-  style={{
-    overflowY: "auto",
-    height: "0",
-    minHeight: "0",
-  }}
->
+                className="flex-grow-1 p-4"
+                style={{
+                  overflowY: "auto",
+                  height: "0",
+                  minHeight: "0",
+                }}
+              >
 
                   {
                     messages.map((msg) => (
@@ -791,84 +800,88 @@ profileImage && profileImage !== "" ? (
       </div>
 
       {
-  showCrop && (
+        showCrop && (
 
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.7)",
-        zIndex: 999,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.7)",
+              zIndex: 999,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
 
-      <div
-        style={{
-          width: "350px",
-          height: "450px",
-          background: "white",
-          borderRadius: "25px",
-          padding: "20px",
-          position: "relative",
-        }}
-      >
+            <div
+              style={{
+                width: "350px",
+                height: "450px",
+                background: "white",
+                borderRadius: "25px",
+                padding: "20px",
+                position: "relative",
+              }}
+            >
 
-        <div
-          style={{
-            position: "relative",
-            width: "100%",
-            height: "300px",
-          }}
-        >
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  height: "300px",
+                }}
+              >
 
-          <Cropper
-            image={imageSrc}
-            crop={crop}
-            zoom={zoom}
-            aspect={1}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-          />
 
-        </div>
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={(croppedArea, croppedAreaPixels) => {
+                    setCroppedAreaPixels(croppedAreaPixels);
+                  }}
+                />
 
-        <input
-          type="range"
-          min={1}
-          max={3}
-          step={0.1}
-          value={zoom}
-          onChange={(e) =>
-            setZoom(e.target.value)
-          }
-          className="w-100 mt-4"
-        />
+              </div>
 
-        <button
-          onClick={saveCroppedImage}
-          style={{
-            width: "100%",
-            marginTop: "20px",
-            border: "none",
-            padding: "14px",
-            borderRadius: "14px",
-            background:
-              "linear-gradient(135deg,#8b7cf6,#6d5dfc)",
-            color: "white",
-            fontWeight: "600",
-          }}
-        >
-          Save Profile
-        </button>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                onChange={(e) =>
+                  setZoom(e.target.value)
+                }
+                className="w-100 mt-4"
+              />
 
-      </div>
+              <button
+                onClick={saveCroppedImage}
+                style={{
+                  width: "100%",
+                  marginTop: "20px",
+                  border: "none",
+                  padding: "14px",
+                  borderRadius: "14px",
+                  background:
+                    "linear-gradient(135deg,#8b7cf6,#6d5dfc)",
+                  color: "white",
+                  fontWeight: "600",
+                }}
+              >
+                Save Profile
+              </button>
 
-    </div>
-  )
-}
+            </div>
+
+          </div>
+        )
+      }
 
     </div>
   );
