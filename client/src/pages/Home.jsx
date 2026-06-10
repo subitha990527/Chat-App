@@ -246,13 +246,6 @@ function Home() {
       croppedAreaPixels
     );
 
-    setProfileImage(croppedImage);
-
-    localStorage.setItem(
-      "profileImage",
-      croppedImage
-    );
-
     const token = localStorage.getItem("token");
 
     await axios.put(
@@ -265,6 +258,20 @@ function Home() {
           Authorization: `Bearer ${token}`,
         },
       }
+    );
+
+    setProfileImage(croppedImage);
+
+    if (selectedUser) {
+      setSelectedUser((prev) => ({
+        ...prev,
+        profilePic: croppedImage,
+      }));
+    }
+
+    localStorage.setItem(
+      "profileImage",
+      croppedImage
     );
 
     await fetchUsers();
@@ -632,7 +639,7 @@ function Home() {
                         fontSize: "18px",
                       }}
                     >
-                      {selectedUser.name.charAt(0)}
+                      {selectedUser?.name?.charAt(0)}
                     </div>
 
                     <div>
