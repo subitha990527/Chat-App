@@ -13,6 +13,7 @@ function Home() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
+  const [search, setSearch] = useState("");
 
   const currentUser = JSON.parse(
     localStorage.getItem("user")
@@ -271,6 +272,10 @@ function Home() {
     setShowCrop(false);
   };
 
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
 
     <div
@@ -432,18 +437,20 @@ function Home() {
             </div>
 
             {/* Search */}
-            <input
-              type="text"
-              placeholder="Search conversation"
-              className="form-control"
-              style={{
-                borderRadius: "15px",
-                border: "none",
-                background: "rgba(255,255,255,0.18)",
-                color: "white",
-                padding: "14px",
-              }}
-            />
+         <input
+          type="text"
+          placeholder="Search conversation"
+          className="form-control"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            borderRadius: "15px",
+            border: "none",
+            background: "rgba(255,255,255,0.18)",
+            color: "white",
+            padding: "14px",
+          }}
+        />
 
           </div>
 
@@ -457,7 +464,7 @@ function Home() {
           >
 
             {
-              users.map((user) => (
+              filteredUsers.map((user) => (
 
                 <div
                   key={user._id}
