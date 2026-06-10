@@ -14,6 +14,7 @@ function Home() {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [search, setSearch] = useState("");
+  const [unreadCounts, setUnreadCounts] = useState({});
 
   const currentUser = JSON.parse(
     localStorage.getItem("user")
@@ -118,6 +119,12 @@ function Home() {
       }
   };
 
+  useEffect(() => {
+
+    fetchUsers();
+
+  }, []);
+
   // Fetch Messages
   const fetchMessages = async (userId) => {
 
@@ -166,6 +173,18 @@ function Home() {
 
       setMessages([...messages, res.data]);
 
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === selectedUser._id
+            ? {
+                ...user,
+                lastMessage: text,
+                lastMessageTime: "Now",
+              }
+            : user
+        )
+      );
+
       socket.emit("sendMessage", res.data);
 
       setText("");
@@ -176,23 +195,53 @@ function Home() {
     }
   };
 
-  useEffect(() => {
-
-    fetchUsers();
-
-  }, []);
 
   useEffect(() => {
 
-    socket.on("receiveMessage", (newMessage) => {
+    const handleReceiveMessage = (newMessage) => {
 
-      setMessages((prev) => [
-        ...prev,
-        newMessage,
-      ]);
-    });
+      console.log("RECEIVED ONCE", newMessage);
 
-  }, []);
+      const senderId = newMessage.sender;
+
+      if (
+        !selectedUser ||
+        selectedUser._id !== senderId
+      ) {
+        setUnreadCounts(prev => ({
+          ...prev,
+          [senderId]: (prev[senderId] || 0) + 1
+        }));
+      }
+
+      if (
+        selectedUser &&
+        selectedUser._id === senderId
+      ) {
+        setMessages(prev => [...prev, newMessage]);
+      }
+
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user._id === senderId
+            ? {
+                ...user,
+                lastMessage: newMessage.message,
+                lastMessageTime: "Now",
+              }
+            : user
+        )
+      );
+    };
+
+    socket.off("receiveMessage"); // remove old listeners
+    socket.on("receiveMessage", handleReceiveMessage);
+
+    return () => {
+      socket.off("receiveMessage", handleReceiveMessage);
+    };
+
+  }, [selectedUser]);
 
 
   // Logout
@@ -475,11 +524,16 @@ function Home() {
 
                 <div
                   key={user._id}
-                  onClick={() => {
+                    onClick={() => {
 
                     setSelectedUser(user);
 
                     fetchMessages(user._id);
+
+                    setUnreadCounts((prev) => ({
+                      ...prev,
+                      [user._id]: 0,
+                    }));
                   }}
                   style={{
                     background: "white",
@@ -539,7 +593,7 @@ function Home() {
                     <div className="flex-grow-1">
 
                       {/* Top Row */}
-                      <div className="d-flex justify-content-between align-items-center">
+                     <div className="d-flex justify-content-between align-items-center">
 
                         <div
                           style={{
@@ -551,19 +605,37 @@ function Home() {
                           {user.name}
                         </div>
 
-                        {/* Time */}
-                        <small
-                          style={{
-                            color: "#94a3b8",
-                            fontSize: "11px",
-                          }}
-                        >
-                          {
-                            user.lastMessageTime
-                              ? user.lastMessageTime
-                              : ""
-                          }
-                        </small>
+                        <div className="d-flex align-items-center gap-2">
+
+                          {unreadCounts[user._id] > 0 && (
+                            <div
+                              style={{
+                                width: "22px",
+                                height: "22px",
+                                borderRadius: "50%",
+                                background: "#22c55e",
+                                color: "#fff",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "12px",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {unreadCounts[user._id]}
+                            </div>
+                          )}
+
+                          <small
+                            style={{
+                              color: "#94a3b8",
+                              fontSize: "11px",
+                            }}
+                          >
+                            {user.lastMessageTime || ""}
+                          </small>
+
+                        </div>
 
                       </div>
 
