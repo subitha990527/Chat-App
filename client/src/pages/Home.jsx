@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import axios from "axios";
 import io from "socket.io-client";
@@ -15,6 +15,7 @@ function Home() {
   const [text, setText] = useState("");
   const [search, setSearch] = useState("");
   const [unreadCounts, setUnreadCounts] = useState({});
+  const messagesEndRef = useRef(null);
 
   const currentUser = JSON.parse(
     localStorage.getItem("user")
@@ -145,6 +146,10 @@ function Home() {
       );
 
       setMessages(res.data);
+
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
 
     } catch (error) {
 
@@ -383,6 +388,16 @@ function Home() {
 
     return msgDate.toLocaleDateString();
   };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
 
@@ -836,6 +851,8 @@ function Home() {
                       </div>
                     ))
                   }
+
+                  <div ref={messagesEndRef} />
 
                 </div>
 
