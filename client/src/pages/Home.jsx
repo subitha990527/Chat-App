@@ -16,6 +16,7 @@ function Home() {
   const [search, setSearch] = useState("");
   const [unreadCounts, setUnreadCounts] = useState({});
   const messagesEndRef = useRef(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   const currentUser = JSON.parse(
     localStorage.getItem("user")
@@ -399,6 +400,22 @@ function Home() {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    if (currentUser?._id) {
+      socket.emit("userOnline", currentUser._id);
+    }
+  }, [currentUser?._id]);
+
+  useEffect(() => {
+    socket.on("onlineUsers", (users) => {
+      setOnlineUsers(users);
+    });
+
+    return () => {
+      socket.off("onlineUsers");
+    };
+  }, []);
+
   return (
 
     <div
@@ -615,44 +632,61 @@ function Home() {
 
                   <div className="d-flex align-items-center gap-3">
 
-                    {/* Avatar */}
-
                     <div
                       style={{
+                        position: "relative",
                         width: "50px",
                         height: "50px",
-                        borderRadius: "50%",
-                        overflow: "hidden",
-                        background:
-                          "linear-gradient(135deg,#4f46e5,#60a5fa)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
                       }}
                     >
-
-                      {user?.profilePic ? (
-                      <img
-                        src={user.profilePic}
-                        alt="profile"
+                      <div
                         style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
+                          width: "50px",
+                          height: "50px",
+                          borderRadius: "50%",
+                          overflow: "hidden",
+                          background: "linear-gradient(135deg,#4f46e5,#60a5fa)",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
-                      />
-                    ) : (
+                      >
+                        {user?.profilePic ? (
+                          <img
+                            src={user.profilePic}
+                            alt="profile"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <span
+                            style={{
+                              color: "white",
+                              fontWeight: "bold",
+                              fontSize: "18px",
+                            }}
+                          >
+                            {user.name.charAt(0)}
+                          </span>
+                        )}
+                      </div>
 
-                        <span
+                      {onlineUsers.includes(user._id) && (
+                        <div
                           style={{
-                            color: "white",
-                            fontWeight: "bold",
-                            fontSize: "18px",
+                            position: "absolute",
+                            bottom: 2,
+                            right: 2,
+                            width: "12px",
+                            height: "12px",
+                            borderRadius: "50%",
+                            background: "#22c55e",
+                            border: "2px solid white",
                           }}
-                        >
-                          {user.name.charAt(0)}
-                        </span>
-
+                        />
                       )}
                     </div>
 
@@ -789,13 +823,17 @@ function Home() {
                         {selectedUser.name}
                       </h5>
 
-                      <small
-                        style={{
-                          color: "#22c55e",
-                        }}
-                      >
-                        Online
-                      </small>
+                    <small
+                      style={{
+                        color: onlineUsers.includes(selectedUser._id)
+                          ? "#22c55e"
+                          : "#94a3b8",
+                      }}
+                    >
+                      {onlineUsers.includes(selectedUser._id)
+                        ? "Online"
+                        : "Offline"}
+                    </small>
 
                     </div>
 
