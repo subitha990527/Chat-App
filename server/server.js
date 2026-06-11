@@ -78,3 +78,34 @@ mongoose.connect(process.env.MONGO_URI)
   });
 })
 .catch((err) => console.log(err));
+
+const onlineUsers = new Map();
+
+io.on("connection", (socket) => {
+
+  socket.on("userOnline", (userId) => {
+
+    onlineUsers.set(userId, socket.id);
+
+    io.emit(
+      "onlineUsers",
+      Array.from(onlineUsers.keys())
+    );
+  });
+
+  socket.on("disconnect", () => {
+
+    for (const [userId, socketId] of onlineUsers.entries()) {
+
+      if (socketId === socket.id) {
+        onlineUsers.delete(userId);
+        break;
+      }
+    }
+
+    io.emit(
+      "onlineUsers",
+      Array.from(onlineUsers.keys())
+    );
+  });
+});
