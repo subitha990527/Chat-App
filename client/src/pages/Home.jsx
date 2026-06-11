@@ -622,12 +622,11 @@ function Home() {
                       )}
                     </div>
 
-                    {/* User Details */}
+                  {/* User Details */}
                     <div className="flex-grow-1">
 
-                      {/* Top Row */}
-                     <div className="d-flex justify-content-between align-items-center">
-
+                      {/* Top Row: Name + Time */}
+                      <div className="d-flex justify-content-between align-items-center">
                         <div
                           style={{
                             fontWeight: "700",
@@ -638,57 +637,55 @@ function Home() {
                           {user.name}
                         </div>
 
-                        <div className="d-flex align-items-center gap-2">
-
-                          {unreadCounts[user._id] > 0 && (
-                            <div
-                              style={{
-                                width: "22px",
-                                height: "22px",
-                                borderRadius: "50%",
-                                background: "#22c55e",
-                                color: "#fff",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: "12px",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {unreadCounts[user._id]}
-                            </div>
-                          )}
-
-                          <small
-                            style={{
-                              color: "#94a3b8",
-                              fontSize: "11px",
-                            }}
-                          >
-                            {formatChatTime(user.lastMessageTime)}
-                          </small>
-
-                        </div>
-
+                        <small
+                          style={{
+                            color: "#94a3b8",
+                            fontSize: "11px",
+                          }}
+                        >
+                          {formatChatTime(user.lastMessageTime)}
+                        </small>
                       </div>
 
-                      {/* Recent Message */}
+                      {/* Bottom Row: Message + Badge */}
                       <div
-                        style={{
-                          color: "#64748b",
-                          fontSize: "13px",
-                          marginTop: "4px",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          maxWidth: "220px",
-                        }}
+                        className="d-flex justify-content-between align-items-center"
+                        style={{ marginTop: "4px" }}
                       >
-                        {
-                          user.lastMessage ||
-                          messages[messages.length - 1]?.message ||
-                          "Start chatting..."
-                        }
+                        <div
+                          style={{
+                            color: "#64748b",
+                            fontSize: "13px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "220px",
+                          }}
+                        >
+                          {user.lastMessage ||
+                            messages[messages.length - 1]?.message ||
+                            "Start chatting..."}
+                        </div>
+
+                        {unreadCounts[user._id] > 0 && (
+                          <div
+                            style={{
+                              minWidth: "22px",
+                              height: "22px",
+                              borderRadius: "50%",
+                              background: "#22c55e",
+                              color: "#fff",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "12px",
+                              fontWeight: "bold",
+                              marginLeft: "10px",
+                            }}
+                          >
+                            {unreadCounts[user._id]}
+                          </div>
+                        )}
                       </div>
 
                     </div>
