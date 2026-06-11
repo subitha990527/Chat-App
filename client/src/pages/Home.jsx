@@ -176,17 +176,23 @@ function Home() {
 
       setMessages([...messages, res.data]);
 
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user._id === selectedUser._id
-            ? {
-                ...user,
-                lastMessage: text,
-                lastMessageTime: res.data.createdAt,
-              }
-            : user
-        )
-      );
+      setUsers((prevUsers) => {
+          const updated = prevUsers.map((user) =>
+            user._id === selectedUser._id
+              ? {
+                  ...user,
+                  lastMessage: text,
+                  lastMessageTime: res.data.createdAt,
+                }
+              : user
+          );
+
+          return updated.sort(
+            (a, b) =>
+              new Date(b.lastMessageTime || 0) -
+              new Date(a.lastMessageTime || 0)
+          );
+        });
 
       socket.emit("sendMessage", res.data);
 
@@ -224,8 +230,8 @@ function Home() {
         setMessages(prev => [...prev, newMessage]);
       }
 
-      setUsers(prevUsers =>
-        prevUsers.map(user =>
+      setUsers(prevUsers => {
+        const updated = prevUsers.map(user =>
           user._id === senderId
             ? {
                 ...user,
@@ -233,8 +239,14 @@ function Home() {
                 lastMessageTime: newMessage.createdAt,
               }
             : user
-        )
-      );
+        );
+
+        return updated.sort(
+          (a, b) =>
+            new Date(b.lastMessageTime || 0) -
+            new Date(a.lastMessageTime || 0)
+        );
+      });
     };
 
     socket.off("receiveMessage"); // remove old listeners
@@ -331,9 +343,16 @@ function Home() {
     setShowCrop(false);
   };
 
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredUsers = users
+    .filter((user) =>
+      user.name.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => {
+      return (
+        new Date(b.lastMessageTime || 0) -
+        new Date(a.lastMessageTime || 0)
+      );
+  });
 
   const formatChatTime = (date) => {
 
