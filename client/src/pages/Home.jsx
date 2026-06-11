@@ -99,6 +99,8 @@ function Home() {
               ...user,
               lastMessage:
                 lastMessage?.message || "Start chatting...",
+              lastMessageTime:
+                lastMessage?.createdAt || null,
             };
 
           } catch {
@@ -106,6 +108,7 @@ function Home() {
             return {
               ...user,
               lastMessage: "Start chatting...",
+              lastMessageTime: null,
             };
           }
         })
@@ -179,7 +182,7 @@ function Home() {
             ? {
                 ...user,
                 lastMessage: text,
-                lastMessageTime: "Now",
+                lastMessageTime: res.data.createdAt,
               }
             : user
         )
@@ -227,7 +230,7 @@ function Home() {
             ? {
                 ...user,
                 lastMessage: newMessage.message,
-                lastMessageTime: "Now",
+                lastMessageTime: newMessage.createdAt,
               }
             : user
         )
@@ -331,6 +334,36 @@ function Home() {
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  const formatChatTime = (date) => {
+
+    if (!date) return "";
+
+    const msgDate = new Date(date);
+    const today = new Date();
+
+    const isToday =
+      msgDate.toDateString() === today.toDateString();
+
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const isYesterday =
+      msgDate.toDateString() === yesterday.toDateString();
+
+    if (isToday) {
+      return msgDate.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    if (isYesterday) {
+      return "Yesterday";
+    }
+
+    return msgDate.toLocaleDateString();
+  };
 
   return (
 
@@ -632,7 +665,7 @@ function Home() {
                               fontSize: "11px",
                             }}
                           >
-                            {user.lastMessageTime || ""}
+                            {formatChatTime(user.lastMessageTime)}
                           </small>
 
                         </div>
