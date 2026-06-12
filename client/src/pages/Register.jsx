@@ -1,7 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
+
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -30,7 +33,13 @@ function Register() {
 
       console.log(res.data);
 
-      alert("Registration Successful");
+      setSuccessMessage("Registered Successfully ✅");
+
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+      });
 
     } catch (error) {
 
@@ -39,6 +48,8 @@ function Register() {
       alert("Registration Failed");
     }
   };
+
+  const navigate = useNavigate();
 
   return (
 
@@ -202,6 +213,7 @@ function Register() {
             name="name"
             placeholder="Full Name"
             className="form-control mb-3"
+            value={formData.name}
             onChange={handleChange}
             style={{
               height: "50px",
@@ -216,6 +228,7 @@ function Register() {
             name="email"
             placeholder="Enter Email"
             className="form-control mb-3"
+            value={formData.email}
             onChange={handleChange}
             style={{
               height: "50px",
@@ -230,6 +243,7 @@ function Register() {
             name="password"
             placeholder="Enter Password"
             className="form-control mb-4"
+            value={formData.password}
             onChange={handleChange}
             style={{
               height: "50px",
@@ -255,6 +269,40 @@ function Register() {
           >
             Sign Up
           </button>
+
+          {successMessage && (
+            <div
+              style={{
+                color: "#22c55e",
+                textAlign: "center",
+                marginTop: "12px",
+                fontWeight: "600",
+              }}
+            >
+              {successMessage}
+            </div>
+          )}
+
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "20px",
+              fontSize: "14px",
+              color: "#64748b",
+            }}
+          >
+            Already have an account?{" "}
+            <span
+              onClick={() => navigate("/login")}
+              style={{
+                color: "#2563eb",
+                fontWeight: "600",
+                cursor: "pointer",
+              }}
+            >
+              Login now
+            </span>
+          </div>
 
         </form>
 
