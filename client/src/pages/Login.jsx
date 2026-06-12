@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
 
@@ -45,6 +46,8 @@ function Login() {
       alert("Login Failed");
     }
   };
+
+  const navigate = useNavigate();
 
   return (
 
@@ -227,6 +230,26 @@ function Login() {
             }}
           />
 
+          {/* <div
+            style={{
+              textAlign: "center",
+              marginTop: "-10px",
+              marginBottom: "15px",
+            }}
+          >
+            <span
+              onClick={() => navigate("/forgot-password")}
+              style={{
+                color: "#6366f1",
+                fontSize: "13px",
+                cursor: "pointer",
+                fontWeight: "500",
+              }}
+            >
+              Forgot password?
+            </span>
+          </div> */}
+
           <button
             className="btn w-100"
             style={{
@@ -243,6 +266,27 @@ function Login() {
           >
             Login
           </button>
+
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "18px",
+              fontSize: "14px",
+              color: "#64748b",
+            }}
+          >
+            Don't have an account?{" "}
+            <span
+              onClick={() => navigate("/register")}
+              style={{
+                color: "#2563eb",
+                fontWeight: "600",
+                cursor: "pointer",
+              }}
+            >
+              Sign Up
+            </span>
+          </div>
 
         </form>
 
