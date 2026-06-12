@@ -416,6 +416,20 @@ function Home() {
     };
   }, []);
 
+  const formatLastSeen = (date) => {
+    if (!date) return "";
+
+    const d = new Date(date);
+
+    return d.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
 
     <div
@@ -820,10 +834,36 @@ function Home() {
                           fontWeight: "700",
                         }}
                       >
-                        {selectedUser.name}
+                        <div>
+                          <div
+                            style={{
+                              fontWeight: 600,
+                              fontSize: "16px",
+                            }}
+                          >
+                            {selectedUser.name}
+                          </div>
+
+                          <div
+                            style={{
+                              fontSize: "12px",
+                              marginTop:"6px",
+                              // color: "#64748b",
+                              color: onlineUsers.includes(selectedUser._id)
+                                                  ? "#22c55e"
+                                                  : "#94a3b8",
+                            }}
+                          >
+                            {onlineUsers.includes(selectedUser._id)
+                              ? "Online"
+                              : `Last seen ${formatLastSeen(
+                                  selectedUser.lastSeen
+                                )}`}
+                          </div>
+                        </div>
                       </h5>
 
-                    <small
+                    {/* <small
                       style={{
                         color: onlineUsers.includes(selectedUser._id)
                           ? "#22c55e"
@@ -833,7 +873,7 @@ function Home() {
                       {onlineUsers.includes(selectedUser._id)
                         ? "Online"
                         : "Offline"}
-                    </small>
+                    </small> */}
 
                     </div>
 
