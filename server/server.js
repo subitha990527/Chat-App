@@ -20,6 +20,8 @@ const io = new Server(server, {
   },
 });
 
+const User = require("./models/User");
+
 
 // middleware
 app.use(cors());
@@ -47,9 +49,48 @@ app.use( "/uploads",express.static("uploads")
 
 
 // socket
+// io.on("connection", (socket) => {
+
+//   console.log("User Connected");
+
+//   socket.on("sendMessage", (message) => {
+
+//     socket.broadcast.emit(
+//       "receiveMessage",
+//       message
+//     );
+//   });
+
+//   socket.on("disconnect", () => {
+
+//     console.log("User Disconnected");
+//   });
+// });
+
+const onlineUsers = new Map();
+
 io.on("connection", (socket) => {
 
   console.log("User Connected");
+
+  socket.on("userOnline", async (userId) => {
+
+    socket.userId = userId;
+
+    onlineUsers.set(userId, socket.id);
+
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        isOnline: true,
+      }
+    );
+
+    io.emit(
+      "onlineUsers",
+      Array.from(onlineUsers.keys())
+    );
+  });
 
   socket.on("sendMessage", (message) => {
 
@@ -59,9 +100,27 @@ io.on("connection", (socket) => {
     );
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
 
     console.log("User Disconnected");
+
+    if (socket.userId) {
+
+      onlineUsers.delete(socket.userId);
+
+      await User.findByIdAndUpdate(
+        socket.userId,
+        {
+          isOnline: false,
+          lastSeen: new Date(),
+        }
+      );
+
+      io.emit(
+        "onlineUsers",
+        Array.from(onlineUsers.keys())
+      );
+    }
   });
 });
 
@@ -78,34 +137,3 @@ mongoose.connect(process.env.MONGO_URI)
   });
 })
 .catch((err) => console.log(err));
-
-const onlineUsers = new Map();
-
-io.on("connection", (socket) => {
-
-  socket.on("userOnline", (userId) => {
-
-    onlineUsers.set(userId, socket.id);
-
-    io.emit(
-      "onlineUsers",
-      Array.from(onlineUsers.keys())
-    );
-  });
-
-  socket.on("disconnect", () => {
-
-    for (const [userId, socketId] of onlineUsers.entries()) {
-
-      if (socketId === socket.id) {
-        onlineUsers.delete(userId);
-        break;
-      }
-    }
-
-    io.emit(
-      "onlineUsers",
-      Array.from(onlineUsers.keys())
-    );
-  });
-});
