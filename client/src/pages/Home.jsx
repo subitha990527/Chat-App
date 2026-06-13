@@ -17,6 +17,7 @@ function Home() {
   const [unreadCounts, setUnreadCounts] = useState({});
   const messagesEndRef = useRef(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [activeTab, setActiveTab] = useState("chats");
 
   const currentUser = JSON.parse(
     localStorage.getItem("user")
@@ -430,6 +431,12 @@ function Home() {
     });
   };
 
+  const chatUsers = filteredUsers.filter(
+    (user) => user.lastMessageTime
+  );
+
+  const contactUsers = filteredUsers;
+
   return (
 
     <div
@@ -455,12 +462,13 @@ function Home() {
       >
 
         {/* Sidebar */}
-        <div
-          className="col-md-4 p-0"
+       <div
+          className="col-md-4 p-0 d-flex flex-column"
           style={{
             background:
               "linear-gradient(180deg,#8b7cf6,#7c6df5)",
             color: "white",
+            height: "95vh",
           }}
         >
 
@@ -591,20 +599,72 @@ function Home() {
             </div>
 
             {/* Search */}
-         <input
-          type="text"
-          placeholder="Search conversation"
-          className="form-control"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            borderRadius: "15px",
-            border: "none",
-            background: "rgba(255,255,255,0.18)",
-            color: "white",
-            padding: "14px",
-          }}
-        />
+            <input
+              type="text"
+              placeholder="Search conversation"
+              className="form-control"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                borderRadius: "15px",
+                border: "none",
+                background: "rgba(255,255,255,0.18)",
+                color: "white",
+                padding: "14px",
+              }}
+            />
+
+            <div
+              className="px-6 mt-3"
+            >
+              <div
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  background: "rgba(255,255,255,0.12)",
+                  borderRadius: "14px",
+                  padding: "4px",
+                  gap: "4px",
+                  marginBottom:"-10px",
+                }}
+              >
+                <button
+                  onClick={() => setActiveTab("chats")}
+                  style={{
+                    flex: 1,
+                    height: "42px",
+                    border: "none",
+                    borderRadius: "10px",
+                    background:
+                      activeTab === "chats"
+                        ? "#926eec"
+                        : "transparent",
+                    color: "white",
+                    fontWeight: "600",
+                  }}
+                >
+                  Chats
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("contacts")}
+                  style={{
+                    flex: 1,
+                    height: "42px",
+                    border: "none",
+                    borderRadius: "10px",
+                    background:
+                      activeTab === "contacts"
+                        ? "#926eec"
+                        : "transparent",
+                    color: "white",
+                    fontWeight: "600",
+                  }}
+                >
+                  Contacts
+                </button>
+              </div>
+            </div>
 
           </div>
 
@@ -618,7 +678,10 @@ function Home() {
           >
 
             {
-              filteredUsers.map((user) => (
+              (activeTab === "chats"
+                ? chatUsers
+                : contactUsers
+              ).map((user) => (
 
                 <div
                   key={user._id}
