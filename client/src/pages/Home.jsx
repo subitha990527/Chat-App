@@ -431,11 +431,20 @@ function Home() {
     });
   };
 
-  const chatUsers = filteredUsers.filter(
-    (user) => user.lastMessageTime
-  );
+  const chatUsers = filteredUsers
+    .filter(
+      (user) => user.lastMessageTime
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.lastMessageTime) -
+        new Date(a.lastMessageTime)
+    );
 
-  const contactUsers = filteredUsers;
+  const contactUsers = [...filteredUsers]
+    .sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
 
   return (
 
@@ -782,14 +791,19 @@ function Home() {
                           {user.name}
                         </div>
 
-                        <small
-                          style={{
-                            color: "#94a3b8",
-                            fontSize: "11px",
-                          }}
-                        >
-                          {formatChatTime(user.lastMessageTime)}
-                        </small>
+                       {
+                          activeTab === "chats" &&
+                          user.lastMessageTime && (
+                            <small
+                              style={{
+                                color: "#94a3b8",
+                                fontSize: "11px",
+                              }}
+                            >
+                              {formatChatTime(user.lastMessageTime)}
+                            </small>
+                          )
+                        }
                       </div>
 
                       {/* Bottom Row: Message + Badge */}
@@ -804,12 +818,11 @@ function Home() {
                             whiteSpace: "nowrap",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
-                            maxWidth: "220px",
                           }}
                         >
-                          {user.lastMessage ||
-                            messages[messages.length - 1]?.message ||
-                            "Start chatting..."}
+                          {activeTab === "contacts"
+                            ? "Start chatting..."
+                            : (user.lastMessage || "Start chatting...")}
                         </div>
 
                         {unreadCounts[user._id] > 0 && (
