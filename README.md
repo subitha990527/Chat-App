@@ -7,8 +7,11 @@ NexChat is a modern real-time chat application built using the MERN Stack and So
 
 ✅ User Authentication (Login & Register)  
 ✅ JWT Authentication  
-✅ Real-time Messaging using Socket.IO  
-✅ Online / Offline User Status  
+✅ Real-time Messaging using Socket.IO 
+✅ One-to-One Private Chat
+✅ Online / Offline User Status 
+✅ Last Seen Status
+✅ Separate Chats & Contacts Sections
 ✅ Premium Modern UI  
 ✅ Responsive Design  
 ✅ Profile Image Upload  
